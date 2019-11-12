@@ -9,18 +9,19 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 /**
- * Servlet implementation class Servlet
+ * Servlet implementation class ServletScopes
  */
-@WebServlet("/Servlet")
-public class Servlet extends HttpServlet {
+@WebServlet("/ServletScopes")
+public class ServletScopes extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
     /**
      * @see HttpServlet#HttpServlet()
      */
-    public Servlet() {
+    public ServletScopes() {
         super();
         // TODO Auto-generated constructor stub
     }
@@ -29,25 +30,27 @@ public class Servlet extends HttpServlet {
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		ServletContext context = getServletContext();
-		System.out.println(context.toString());
-		
-		Integer hits = (Integer) context.getAttribute("hits");
-		
-		if(hits == null){
-			hits = 0;
-		} else {
-			hits++;
-		}
-		context.setAttribute("hits", hits);
 		PrintWriter out = response.getWriter();
-		out.println("Number of hits: " + hits);
 		
-		String name = (String) context.getInitParameter("name");
-		String password = (String) context.getInitParameter("password");
+		// Request scope
+		request.setAttribute("test", "Hello 1");
+		String test1 = (String) request.getAttribute("test");
+		out.println("Test 1 Request Scope is: " + test1);
+		out.println("<p>");
 		
-		out.println("<p> Admin name is: " + name + "</p>");
-		out.println("<p> Admin name is: " + password + "</p>");
+		// Session scope
+		HttpSession session = request.getSession();
+		session.setAttribute("test", "Hello 2");
+		String test2 = (String) session.getAttribute("test");
+		out.println("Test 2 Session Scope is: " + test2);
+		out.println("<p>");
+		
+		// Application scope
+		ServletContext context = request.getServletContext();
+		context.setAttribute("test", "Hello 3");
+		String test3 = (String) context.getAttribute("test");
+		out.println("Test 3 Application Scope is: " + test3);
+		out.println("<p>");
 	}
 
 	/**

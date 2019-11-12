@@ -42,6 +42,12 @@ public class Controller extends HttpServlet {
 		
 		PrintWriter out = response.getWriter();
 		out.println("Number of hits: " + hits);
+		
+		String admin = context.getInitParameter("name");
+		String pass = context.getInitParameter("password");
+		
+		out.println("Admin is: " + admin + " and password is: " + pass);
+		
 	}
 
 	/**

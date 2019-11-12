@@ -1,9 +1,11 @@
-package controller;
+package demo;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
 
-import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -11,16 +13,16 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- * Servlet implementation class Servlet
+ * Servlet implementation class Connect2
  */
-@WebServlet("/Servlet")
-public class Servlet extends HttpServlet {
+@WebServlet("/Connect2")
+public class Connect2 extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
     /**
      * @see HttpServlet#HttpServlet()
      */
-    public Servlet() {
+    public Connect2() {
         super();
         // TODO Auto-generated constructor stub
     }
@@ -29,25 +31,35 @@ public class Servlet extends HttpServlet {
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		ServletContext context = getServletContext();
-		System.out.println(context.toString());
-		
-		Integer hits = (Integer) context.getAttribute("hits");
-		
-		if(hits == null){
-			hits = 0;
-		} else {
-			hits++;
-		}
-		context.setAttribute("hits", hits);
 		PrintWriter out = response.getWriter();
-		out.println("Number of hits: " + hits);
 		
-		String name = (String) context.getInitParameter("name");
-		String password = (String) context.getInitParameter("password");
+		try {
+			Class.forName("com.mysql.jdbc.Driver");
+		} catch (ClassNotFoundException e1) {
+			out.println("No driver found <br/>");
+			e1.printStackTrace();
+			return;
+		}
 		
-		out.println("<p> Admin name is: " + name + "</p>");
-		out.println("<p> Admin name is: " + password + "</p>");
+		Connection conn = null;
+		
+		try {
+			conn = DriverManager.getConnection("jdbc:mysql://localhost/webshop", "root", "password");
+		} catch (SQLException e) {
+			out.println("Could not connect to the database <br/>");
+			e.printStackTrace();
+			return;
+		}
+		
+		out.println("Connection established");
+		
+		try {
+			conn.close();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 	}
 
 	/**

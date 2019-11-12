@@ -3,24 +3,24 @@ package controller;
 import java.io.IOException;
 import java.io.PrintWriter;
 
-import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- * Servlet implementation class Servlet
+ * Servlet implementation class CookieServlet
  */
-@WebServlet("/Servlet")
-public class Servlet extends HttpServlet {
+@WebServlet("/CookieServlet")
+public class CookieServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
     /**
      * @see HttpServlet#HttpServlet()
      */
-    public Servlet() {
+    public CookieServlet() {
         super();
         // TODO Auto-generated constructor stub
     }
@@ -29,25 +29,35 @@ public class Servlet extends HttpServlet {
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		ServletContext context = getServletContext();
-		System.out.println(context.toString());
-		
-		Integer hits = (Integer) context.getAttribute("hits");
-		
-		if(hits == null){
-			hits = 0;
-		} else {
-			hits++;
-		}
-		context.setAttribute("hits", hits);
 		PrintWriter out = response.getWriter();
-		out.println("Number of hits: " + hits);
 		
-		String name = (String) context.getInitParameter("name");
-		String password = (String) context.getInitParameter("password");
+		Cookie[] cookies = request.getCookies();
 		
-		out.println("<p> Admin name is: " + name + "</p>");
-		out.println("<p> Admin name is: " + password + "</p>");
+		out.println("<html>");
+		
+		if(cookies == null){
+			out.println("No cookies found <br/>");
+		} else {
+			for(Cookie oneCookie: cookies){
+				String name = oneCookie.getName();
+				String value = oneCookie.getValue();
+				out.println(name + " = " + value + "<br/>");
+			}
+		}
+	
+		Cookie cookie = new Cookie("user", "Adian");
+		Cookie cookie2 = new Cookie("boss", "Jasmin");
+		Cookie cook3 = new Cookie("admin", "Amela");
+		
+		response.addCookie(cookie);
+		response.addCookie(cook3);
+		response.addCookie(cookie2);
+		
+		cookie.setMaxAge(100);
+		
+		out.println("Cookies were set.");
+		
+		out.println("</html>");
 	}
 
 	/**
